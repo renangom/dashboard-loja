@@ -1,5 +1,5 @@
 import React from 'react';
-import { ModalBody, OrderDetails, Overlay } from './styles';
+import { Actions, ModalBody, OrderDetails, Overlay } from './styles';
 import closeIcon from '../../assets/images/close-icon.svg';
 import { OrdersProps } from '../../Types/Orders';
 import { formatCurrency } from '../../utils/formatCurrency';
@@ -7,24 +7,28 @@ import { formatCurrency } from '../../utils/formatCurrency';
 interface ModalProps{
   visible: boolean;
   selectedOrder: OrdersProps | null;
+  onClose: () => void;
 }
 
-export default function Modal({visible, selectedOrder} : ModalProps) {
+export default function Modal({visible, selectedOrder, onClose} : ModalProps) {
 
-  function handleCloseModal() {
-    return visible = false;
-  }
 
   if(!visible || !selectedOrder){
     return null;
   }
+
+
+  // CALCULANDO TOTAL
+  const total = selectedOrder.products.reduce((total, {product, quantity}) => {
+    return total += product.price * quantity;
+  }, 0);
 
   return (
     <Overlay>
       <ModalBody>
         <header>
           <strong> Mesa {selectedOrder.table} </strong>
-          <button onClick={handleCloseModal}>
+          <button onClick={onClose}>
             <img src={closeIcon } alt="X" />
           </button>
         </header>
@@ -64,10 +68,19 @@ export default function Modal({visible, selectedOrder} : ModalProps) {
           </div>
           <div className='total'>
             <span> Total </span>
-            <strong>R$ 120,00</strong>
+            <strong>{formatCurrency(total)}</strong>
           </div>
 
         </OrderDetails>
+        <Actions>
+          <button className='primary'>
+            <span>🍹</span>
+            <span>Iniciar Produção</span>
+          </button>
+          <button className="secondary">
+            Cancelar Pedido
+          </button>
+        </Actions>
       </ModalBody>
     </Overlay>
   );

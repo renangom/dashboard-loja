@@ -18,9 +18,14 @@ export default function Board(props : BoardProps) {
     setSelectedOrder(order);
   }
 
+  function handleCloseModal(){
+    setActive(false);
+    setSelectedOrder(null);
+  }
+
   return (
     <BoardContainer>
-      <Modal visible={active} selectedOrder={selectedOrder}  />
+      <Modal visible={active} selectedOrder={selectedOrder} onClose={handleCloseModal}  />
       <header>
         <span>{props.icon}</span>
         <strong>{props.titulo} </strong>
